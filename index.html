@@ -140,7 +140,9 @@ msg("setupMsg","Supabase imeunganishwa. Inakagua akaunti...","success");
  }catch(e){msg("setupMsg","Imeshindikana kuunganisha: "+e.message,"error");}
 }
 async function login(){
- const email=$("email").value.trim(),password=$("password").value;
+ const fullName=$("fullName").value.trim();
+const email=$("email").value.trim();
+const password=$("password").value;
  const {data,error}=await sb.auth.signInWithPassword({email,password});
  if(error){msg("authMsg","Imeshindikana kuingia: "+error.message,"error");return;}
  await loadAccount();
