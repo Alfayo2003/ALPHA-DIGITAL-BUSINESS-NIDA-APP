@@ -132,6 +132,7 @@ async function connect(){msg("setupMsg","Kitufe kimefanya kazi. Tunajaribu kuung
  if(!window.supabase){msg("setupMsg","Maktaba ya Supabase haijapakia. Hakikisha intaneti ipo.","error");return;}
  try{
   sb=window.supabase.createClient(url,key);
+msg("setupMsg","Supabase imeunganishwa. Inakagua akaunti...","success");
   const {data,error}=await sb.auth.getSession();
   if(error) throw error;
   show("setup",false);
