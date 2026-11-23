@@ -126,7 +126,7 @@ const $ = id => document.getElementById(id);
 function msg(id,text,type="notice"){const el=$(id);el.textContent=text;el.className="notice "+(type==="error"?"error":type==="success"?"success":"");}
 function show(id,on=true){$(id).classList.toggle("hidden",!on);}
 function money(v){return new Intl.NumberFormat("sw-TZ").format(Number(v||0))+" TSh";}
-async function connect(){
+async function connect(){msg("setupMsg","Kitufe kimefanya kazi. Tunajaribu kuunganisha...","notice");
  const url=$("projectUrl").value.trim(), key=$("anonKey").value.trim();
  if(!url || !key){msg("setupMsg","Jaza Project URL na anon/public key kwanza.","error");return;}
  if(!window.supabase){msg("setupMsg","Maktaba ya Supabase haijapakia. Hakikisha intaneti ipo.","error");return;}
