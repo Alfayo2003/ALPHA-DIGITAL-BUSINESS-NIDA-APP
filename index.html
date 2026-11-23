@@ -145,18 +145,28 @@ async function login(){
  await loadAccount();
 }
 async function signup(){
- const email=$("email").value.trim(),password=$("password").value;
+ const fullName=$("fullName").value.trim();
+const email=$("email").value.trim(),password=$("password").value;
+if(!fullName){msg("authMsg","Andika jina kamili.","error");return;}(),password=$("password").value;
  if(password.length<8){msg("authMsg","Nenosiri liwe na angalau herufi/namba 8.","error");return;}
- const {data,error}=await sb.auth.signUp({email,password});
+ const {data,error}=await sb.auth.signUp({email,password,options:{data:{full_name:fullName}}});
  if(error){msg("authMsg","Usajili umeshindikana: "+error.message,"error");return;}
  msg("authMsg","Usajili umepokelewa. Kama uthibitishaji wa email umewashwa, fungua barua pepe yako kuthibitisha akaunti.","success");
 }
 async function loadAccount(){
  const {data:{user},error}=await sb.auth.getUser();
- if(error||!user){show("auth",true);show("app",false);return;}
+ msg("authMsg","Usajili umepokelewa. Akaunti yako inasubiri idhini ya msimamizi. Thibitisha email ikiwa utaombwa.","success");
  currentUser=user;
  const {data:profile,error:profileError}=await sb.from("profiles").select("full_name,role,status,user_id").eq("user_id",user.id).maybeSingle();
- if(profileError){msg("roleNotice","Imeshindikana kusoma profile: "+profileError.message,"error");}
+ if(!profile || profile.status!=="active"){
+ await sb.auth.signOut();
+ currentUser=null;
+ isAdmin=false;
+ msg("authMsg","Akaunti yako inasubiri idhini ya msimamizi. Tafadhali subiri.","error");
+ show("app",false);
+ show("auth",true);
+ return;
+ }
  isAdmin=!!profile && profile.role==="admin" && profile.status==="active";
  $("welcome").textContent=profile?.full_name ? "Karibu, "+profile.full_name : "Karibu kwenye dashibodi";
  $("accountInfo").textContent=user.email||"";
