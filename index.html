@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="sw">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#102b50">
+<title>ALPHA DIGITAL BUSINESS NIDA APP</title>
+<style>
+:root{--navy:#102b50;--gold:#f2c14e;--bg:#f4f6fa;--ink:#172033;--muted:#657087;--line:#dce2ec;--white:#fff;--red:#b42318;--green:#067647}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px system-ui,-apple-system,Segoe UI,sans-serif}
+header{background:var(--navy);color:#fff;padding:18px 16px;border-bottom:4px solid var(--gold)}
+.brand{font-weight:800;letter-spacing:.3px}.sub{font-size:12px;color:#d9e4f4;margin-top:4px}
+main{max-width:900px;margin:22px auto;padding:0 14px}.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;margin:14px 0;box-shadow:0 3px 14px #102b500a}
+h1,h2,h3{margin:0 0 12px}h1{font-size:22px}h2{font-size:19px}.muted{color:var(--muted);font-size:14px}
+label{display:block;font-weight:650;font-size:14px;margin:12px 0 6px}
+input,textarea{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:10px;font:inherit;background:#fff}
+button{border:0;border-radius:10px;padding:12px 16px;background:var(--navy);color:#fff;font-weight:700;font-size:15px;cursor:pointer}
+button.secondary{background:#e8edf5;color:var(--navy)}button.danger{background:#b42318}
+button:disabled{opacity:.5;cursor:not-allowed}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.stat{background:#f1f5fb;border-radius:12px;padding:14px}.stat strong{display:block;font-size:23px;color:var(--navy)}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}nav button{background:#e8edf5;color:var(--navy)}nav button.active{background:var(--navy);color:#fff}
+select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:10px;font:inherit;background:#fff}
+.request{border:1px solid var(--line);border-radius:12px;padding:14px;margin:10px 0}.request-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.status{font-size:12px;font-weight:800;padding:5px 9px;border-radius:99px;background:#eef4ff;color:#173b70}.request-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}.request-actions select{max-width:190px}
+.hidden{display:none!important}.notice{padding:12px;border-radius:10px;background:#eef4ff;color:#173b70;margin:12px 0;font-size:14px}
+.error{background:#fff1f0;color:var(--red)}.success{background:#ecfdf3;color:var(--green)}
+.service{border:1px solid var(--line);border-radius:12px;padding:14px;margin:10px 0}
+.price{font-weight:800;color:var(--navy);font-size:18px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:26px}
+.small{font-size:12px;color:var(--muted);word-break:break-word}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">👑 ALPHA DIGITAL BUSINESS</div>
+  <div class="sub">NIDA APP • HUDUMA KWA KISWAHILI</div>
+</header>
+<main>
+  <div id="setup" class="card">
+    <h1>Unganisha Supabase</h1>
+    <p class="muted">Weka Project URL na anon/public key kutoka Supabase → Project Settings → API. Usitumie service_role key hapa.</p>
+    <label>Project URL</label>
+    <input id="projectUrl" value="https://wlhcsddmqopprngzpbke.supabase.co" placeholder="https://....supabase.co">
+    <label>Anon / Publishable key</label>
+    <textarea id="anonKey" rows="3" placeholder="Bandika anon/public key hapa"></textarea>
+    <div class="actions"><button id="connectBtn">Unganisha</button></div>
+    <div id="setupMsg" class="notice">Muunganisho utaanzishwa baada ya kuweka anon/public key.</div>
+  </div>
+
+  <section id="auth" class="card hidden">
+    <h1>Karibu kwenye NIDA APP</h1>
+    <p class="muted">Ingia kwenye akaunti yako au jisajili kama mtumiaji mpya.</p>
+    <label>Barua pepe</label><input id="email" type="email" autocomplete="email" placeholder="mfano@email.com">
+    <label>Nenosiri</label><input id="password" type="password" autocomplete="current-password" placeholder="Weka nenosiri">
+    <div class="actions">
+      <button id="loginBtn">Ingia</button>
+      <button id="signupBtn" class="secondary">Jisajili</button>
+    </div>
+    <div id="authMsg" class="notice">Tumia akaunti yako ya Supabase Auth.</div>
+  </section>
+
+  <section id="app" class="hidden">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap">
+        <div><h1 id="welcome">Dashibodi</h1><div id="accountInfo" class="muted"></div></div>
+        <button id="logoutBtn" class="secondary">Toka</button>
+      </div>
+      <div id="roleNotice" class="notice"></div>
+      <nav id="tabs">
+        <button class="active" data-tab="servicesTab">Huduma</button>
+        <button data-tab="myRequestsTab">Maombi yangu</button>
+        <button data-tab="adminTab" id="adminNav" class="hidden">Usimamizi wa huduma</button>
+        <button data-tab="adminRequestsTab" id="adminRequestsNav" class="hidden">Maombi ya wateja</button>
+      </nav>
+    </div>
+
+    <section id="servicesTab" class="card">
+      <h2>Huduma zinazopatikana</h2>
+      <p class="muted">Orodha ya huduma zilizowekwa na msimamizi.</p>
+      <div id="servicesList">Inapakia huduma...</div>
+      <div class="card" style="box-shadow:none;margin:16px 0 0;padding:14px">
+        <h2>Omba huduma</h2>
+        <p class="muted">Chagua huduma, jaza jina na simu. Usiweke namba ya NIDA au nyaraka nyeti hapa.</p>
+        <form id="requestForm">
+          <label>Huduma unayoomba</label><select id="requestService" required><option value="">Chagua huduma</option></select>
+          <label>Jina la mteja</label><input id="customerName" autocomplete="name" required maxlength="120" placeholder="Jina kamili">
+          <label>Namba ya simu</label><input id="customerPhone" type="tel" inputmode="tel" required maxlength="20" placeholder="Mf. 07XXXXXXXX">
+          <label>Maelezo ya ziada (si lazima)</label><textarea id="requestDetails" rows="3" maxlength="1000" placeholder="Andika maelezo mafupi ya ombi"></textarea>
+          <div class="actions"><button id="submitRequestBtn" type="submit">Tuma ombi</button></div>
+        </form>
+        <div id="requestMsg" class="notice">Ingia kwenye akaunti yako ili kutuma ombi.</div>
+      </div>
+    </section>
+
+    <section id="myRequestsTab" class="card hidden">
+      <h2>Maombi yangu</h2><p class="muted">Hapa utaona maombi uliyotuma na hatua yake.</p>
+      <div id="myRequestsList">Inapakia...</div>
+      <div class="actions"><button id="refreshMyRequestsBtn" class="secondary" type="button">Sasisha maombi</button></div>
+    </section>
+
+    <section id="adminTab" class="card hidden">
+      <h2>Usimamizi wa huduma</h2>
+      <div class="notice">Sehemu hii inaonekana kwa akaunti yenye role ya <b>admin</b> na status ya <b>active</b>.</div>
+      <label>Jina la huduma</label><input id="serviceName" placeholder="Mfano: Nakala ya NIDA">
+      <label>Maelezo</label><textarea id="serviceDescription" rows="3" placeholder="Eleza huduma kwa ufupi"></textarea>
+      <label>Bei (TSh)</label><input id="servicePrice" type="number" min="0" step="1" value="0">
+      <div class="actions"><button id="addServiceBtn">Hifadhi huduma</button><button id="refreshBtn" class="secondary">Sasisha orodha</button></div>
+      <div id="adminMsg" class="notice">Unaweza kuongeza huduma hapa. Ruhusa za database bado ndizo zinazoamua kinachoruhusiwa.</div>
+    </section>
+
+    <section id="adminRequestsTab" class="card hidden">
+      <h2>Maombi ya wateja</h2>
+      <p class="muted">Msimamizi anaweza kuona maombi na kubadilisha hatua yake.</p>
+      <div id="adminRequestsList">Inapakia maombi...</div>
+      <div class="actions"><button id="refreshAdminRequestsBtn" class="secondary" type="button">Sasisha maombi</button></div>
+      <div id="adminRequestsMsg" class="notice">Maombi yataonekana hapa yakitumwa na wateja.</div>
+    </section>
+  </section>
+</main>
+<footer>ALPHA DIGITAL BUSINESS • Toleo la mwanzo la mfumo</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+let sb = null, currentUser = null, isAdmin = false;
+const $ = id => document.getElementById(id);
+function msg(id,text,type="notice"){const el=$(id);el.textContent=text;el.className="notice "+(type==="error"?"error":type==="success"?"success":"");}
+function show(id,on=true){$(id).classList.toggle("hidden",!on);}
+function money(v){return new Intl.NumberFormat("sw-TZ").format(Number(v||0))+" TSh";}
+async function connect(){
+ const url=$("projectUrl").value.trim(), key=$("anonKey").value.trim();
+ if(!url || !key){msg("setupMsg","Jaza Project URL na anon/public key kwanza.","error");return;}
+ if(!window.supabase){msg("setupMsg","Maktaba ya Supabase haijapakia. Hakikisha intaneti ipo.","error");return;}
+ try{
+  sb=window.supabase.createClient(url,key);
+  const {data,error}=await sb.auth.getSession();
+  if(error) throw error;
+  show("setup",false);
+  if(data.session){await loadAccount();}else{show("auth",true);}
+ }catch(e){msg("setupMsg","Imeshindikana kuunganisha: "+e.message,"error");}
+}
+async function login(){
+ const email=$("email").value.trim(),password=$("password").value;
+ const {data,error}=await sb.auth.signInWithPassword({email,password});
+ if(error){msg("authMsg","Imeshindikana kuingia: "+error.message,"error");return;}
+ await loadAccount();
+}
+async function signup(){
+ const email=$("email").value.trim(),password=$("password").value;
+ if(password.length<8){msg("authMsg","Nenosiri liwe na angalau herufi/namba 8.","error");return;}
+ const {data,error}=await sb.auth.signUp({email,password});
+ if(error){msg("authMsg","Usajili umeshindikana: "+error.message,"error");return;}
+ msg("authMsg","Usajili umepokelewa. Kama uthibitishaji wa email umewashwa, fungua barua pepe yako kuthibitisha akaunti.","success");
+}
+async function loadAccount(){
+ const {data:{user},error}=await sb.auth.getUser();
+ if(error||!user){show("auth",true);show("app",false);return;}
+ currentUser=user;
+ const {data:profile,error:profileError}=await sb.from("profiles").select("full_name,role,status,user_id").eq("user_id",user.id).maybeSingle();
+ if(profileError){msg("roleNotice","Imeshindikana kusoma profile: "+profileError.message,"error");}
+ isAdmin=!!profile && profile.role==="admin" && profile.status==="active";
+ $("welcome").textContent=profile?.full_name ? "Karibu, "+profile.full_name : "Karibu kwenye dashibodi";
+ $("accountInfo").textContent=user.email||"";
+ $("roleNotice").textContent=isAdmin?"Akaunti ya msimamizi imethibitishwa.":"Umeingia kama mtumiaji. Sehemu za usimamizi zinapatikana kwa Admin pekee.";
+ show("auth",false);show("app",true);show("adminNav",isAdmin);show("adminRequestsNav",isAdmin);show("adminTab",false);show("adminRequestsTab",false);show("myRequestsTab",false);
+ await loadServices();await loadMyRequests();if(isAdmin)await loadAdminRequests();
+}
+async function loadServices(){
+ $("servicesList").textContent="Inapakia huduma...";
+ const {data,error}=await sb.from("services").select("id,name,description,price,status,created_at").eq("status","active").order("created_at",{ascending:false});
+ if(error){$("servicesList").textContent="Imeshindikana kupakia huduma: "+error.message;return;}
+ const serviceSelect=$("requestService");serviceSelect.innerHTML='<option value="">Chagua huduma</option>';
+ (data||[]).forEach(s=>{const opt=document.createElement("option");opt.value=s.id;opt.textContent=s.name;serviceSelect.append(opt);});
+ if(!data?.length){$("servicesList").textContent="Bado hakuna huduma zilizowekwa.";return;}
+ $("servicesList").innerHTML="";
+ data.forEach(s=>{
+  const div=document.createElement("div");div.className="service";
+  const h=document.createElement("h3");h.textContent=s.name;
+  const d=document.createElement("p");d.className="muted";d.textContent=s.description||"";
+  const p=document.createElement("div");p.className="price";p.textContent=money(s.price);
+  div.append(h,d,p);$("servicesList").append(div);
+ });
+}
+function statusLabel(status){return ({pending:"Linasubiri",processing:"Linafanyiwa kazi",completed:"Limekamilika",rejected:"Limekataliwa"})[status]||status;}
+async function submitRequest(e){
+ e.preventDefault();
+ if(!currentUser){msg("requestMsg","Ingia kwanza kwenye akaunti yako.","error");return;}
+ const serviceName=$("requestService").selectedOptions[0]?.textContent||"";
+ const serviceId=$("requestService").value;
+ const customerName=$("customerName").value.trim();
+ const customerPhone=$("customerPhone").value.trim();
+ const details=$("requestDetails").value.trim();
+ if(!serviceId||!customerName||!customerPhone){msg("requestMsg","Jaza huduma, jina na namba ya simu.","error");return;}
+ $("submitRequestBtn").disabled=true;
+ const {error}=await sb.from("service_requests").insert({user_id:currentUser.id,customer_name:customerName,customer_phone:customerPhone,service_name:serviceName,details:details||null,status:"pending"});
+ $("submitRequestBtn").disabled=false;
+ if(error){msg("requestMsg","Ombi halijatumwa: "+error.message,"error");return;}
+ $("requestForm").reset();msg("requestMsg","Ombi lako limetumwa. Unaweza kufuatilia hatua yake kwenye Maombi yangu.","success");
+ await loadMyRequests();
+ if(isAdmin) await loadAdminRequests();
+}
+function renderRequestCard(item,adminMode){
+ const box=document.createElement("div");box.className="request";
+ const head=document.createElement("div");head.className="request-head";
+ const title=document.createElement("strong");title.textContent=item.service_name||"Huduma";
+ const badge=document.createElement("span");badge.className="status";badge.textContent=statusLabel(item.status);
+ head.append(title,badge);box.append(head);
+ const who=document.createElement("p");who.className="muted";who.textContent=(adminMode?`${item.customer_name||""} • ${item.customer_phone||""} • `:"")+new Date(item.created_at).toLocaleString("sw-TZ");box.append(who);
+ if(item.details){const d=document.createElement("p");d.textContent=item.details;box.append(d);}
+ if(adminMode){
+  const controls=document.createElement("div");controls.className="request-actions";
+  const select=document.createElement("select");
+  [["pending","Linasubiri"],["processing","Linafanyiwa kazi"],["completed","Limekamilika"],["rejected","Limekataliwa"]].forEach(([v,t])=>{const o=document.createElement("option");o.value=v;o.textContent=t;select.append(o);});
+  select.value=item.status||"pending";
+  const save=document.createElement("button");save.type="button";save.textContent="Hifadhi hali";
+  save.addEventListener("click",async()=>{
+   save.disabled=true;
+   const {error}=await sb.from("service_requests").update({status:select.value,updated_at:new Date().toISOString()}).eq("id",item.id);
+   save.disabled=false;
+   if(error){msg("adminRequestsMsg","Imeshindikana kusasisha: "+error.message,"error");return;}
+   msg("adminRequestsMsg","Hali ya ombi imesasishwa.","success");await loadAdminRequests();
+  });
+  controls.append(select,save);box.append(controls);
+ }
+ return box;
+}
+async function loadMyRequests(){
+ const host=$("myRequestsList");host.textContent="Inapakia...";
+ const {data,error}=await sb.from("service_requests").select("id,service_name,customer_name,customer_phone,details,status,created_at").eq("user_id",currentUser.id).order("created_at",{ascending:false}).limit(50);
+ if(error){host.textContent="Imeshindikana kupakia maombi: "+error.message;return;}
+ host.innerHTML="";if(!data?.length){host.textContent="Bado hujatuma ombi.";return;}
+ data.forEach(x=>host.append(renderRequestCard(x,false)));
+}
+async function loadAdminRequests(){
+ if(!isAdmin)return;
+ const host=$("adminRequestsList");host.textContent="Inapakia maombi...";
+ const {data,error}=await sb.from("service_requests").select("id,user_id,service_name,customer_name,customer_phone,details,status,created_at").order("created_at",{ascending:false}).limit(100);
+ if(error){host.textContent="Imeshindikana kupakia maombi: "+error.message;return;}
+ host.innerHTML="";if(!data?.length){host.textContent="Bado hakuna maombi ya wateja.";return;}
+ data.forEach(x=>host.append(renderRequestCard(x,true)));
+}
+async function addService(){
+ if(!isAdmin){msg("adminMsg","Huna ruhusa ya kuongeza huduma.","error");return;}
+ const name=$("serviceName").value.trim(),description=$("serviceDescription").value.trim(),price=Number($("servicePrice").value||0);
+ if(!name){msg("adminMsg","Andika jina la huduma.","error");return;}
+ const {error}=await sb.from("services").insert({name,description,price,status:"active"});
+ if(error){msg("adminMsg","Imeshindikana kuhifadhi: "+error.message,"error");return;}
+ $("serviceName").value="";$("serviceDescription").value="";$("servicePrice").value="0";
+ msg("adminMsg","Huduma imehifadhiwa kikamilifu.","success");await loadServices();
+}
+async function logout(){await sb.auth.signOut();currentUser=null;isAdmin=false;show("app",false);show("auth",true);}
+$("connectBtn").addEventListener("click",connect);
+$("loginBtn").addEventListener("click",login);
+$("signupBtn").addEventListener("click",signup);
+$("logoutBtn").addEventListener("click",logout);
+$("addServiceBtn").addEventListener("click",addService);
+$("refreshBtn").addEventListener("click",loadServices);
+$("requestForm").addEventListener("submit",submitRequest);
+$("refreshMyRequestsBtn").addEventListener("click",loadMyRequests);
+$("refreshAdminRequestsBtn").addEventListener("click",loadAdminRequests);
+document.querySelectorAll("#tabs button").forEach(b=>b.addEventListener("click",()=>{
+ document.querySelectorAll("#tabs button").forEach(x=>x.classList.remove("active"));b.classList.add("active");
+ ["servicesTab","myRequestsTab","adminTab","adminRequestsTab"].forEach(id=>show(id,id===b.dataset.tab&&(id!=="adminTab"&&id!=="adminRequestsTab"||isAdmin)));
+ if(b.dataset.tab==="myRequestsTab")loadMyRequests();if(b.dataset.tab==="adminRequestsTab"&&isAdmin)loadAdminRequests();
+}));
+</script>
+</body>
+</html>
