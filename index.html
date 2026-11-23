@@ -147,15 +147,36 @@ const password=$("password").value;
  if(error){msg("authMsg","Imeshindikana kuingia: "+error.message,"error");return;}
  await loadAccount();
 }
+
 async function signup(){
  const fullName=$("fullName").value.trim();
-const email=$("email").value.trim(),password=$("password").value;
-if(!fullName){msg("authMsg","Andika jina kamili.","error");return;}(),password=$("password").value;
- if(password.length<8){msg("authMsg","Nenosiri liwe na angalau herufi/namba 8.","error");return;}
- const {data,error}=await sb.auth.signUp({email,password,options:{data:{full_name:fullName}}});
- if(error){msg("authMsg","Usajili umeshindikana: "+error.message,"error");return;}
+ const email=$("email").value.trim();
+ const password=$("password").value;
+
+ if(!fullName){
+  msg("authMsg","Andika jina kamili.","error");
+  return;
+ }
+
+ if(password.length<8){
+  msg("authMsg","Nenosiri liwe na angalau herufi/namba 8.","error");
+  return;
+ }
+
+ const {data,error}=await sb.auth.signUp({
+  email,
+  password,
+  options:{data:{full_name:fullName}}
+ });
+
+ if(error){
+  msg("authMsg","Usajili umeshindikana: "+error.message,"error");
+  return;
+ }
+
  msg("authMsg","Usajili umepokelewa. Kama uthibitishaji wa email umewashwa, fungua barua pepe yako kuthibitisha akaunti.","success");
 }
+
 async function loadAccount(){
  const {data:{user},error}=await sb.auth.getUser();
  msg("authMsg","Usajili umepokelewa. Akaunti yako inasubiri idhini ya msimamizi. Thibitisha email ikiwa utaombwa.","success");
